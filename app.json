@@ -10,16 +10,7 @@
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
-    },
-    "plugins": [
-      [
-        "expo-notifications",
-        {
-          "icon": "./local/assets/icon.png",
-          "color": "#ffffff",
-        }
-      ]
-    ],  
+    }, 
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -34,6 +25,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./local/assets/icon.png",
+          "color": "#ffffff"
+        }
+      ]
+    ]
   }
 }
