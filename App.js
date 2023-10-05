@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Alert, Button, StyleSheet, Text, View, Platform } from "react-native";
 import * as Notifications from "expo-notifications";
 import { useEffect } from "react";
 
@@ -15,15 +15,51 @@ Notifications.setNotificationHandler({
 
 export default function App() {
   useEffect(() => {
-    const subscription = Notifications.addNotificationReceivedListener((notification) => {
-      console.log('Notification recived');
-      console.log(notification)
-    });
+    async function configurePushNotification() {
+      const { status } = await Notifications.getPermissionsAsync();
+      let finalStatus = status;
 
-    const subscription2 = Notifications.addNotificationResponseReceivedListener((response) => {
-      console.log('Notification response recived');
-      console.log(response)
-    });
+      if (finalStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+
+      if (finalStatus !== "granted") {
+        Alert.alert(
+          "Permission required!",
+          "Push notifications neet the permission."
+        );
+        return;
+      }
+
+      const pushTokenData = Notifications.getExpoPushTokenAsync();
+      console.log(pushTokenData);
+
+      if (Platform.OS === "android") {
+        Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.DEFAULT
+        });
+      }
+    }
+
+    configurePushNotification();
+  }, []);
+
+  useEffect(() => {
+    const subscription = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        console.log("Notification recived");
+        console.log(notification);
+      }
+    );
+
+    const subscription2 = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        console.log("Notification response recived");
+        console.log(response);
+      }
+    );
 
     return () => {
       subscription.remove();
